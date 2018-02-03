@@ -212,6 +212,13 @@ extern AssertionHandler __assertion_table_start __asm("section$start$__DATA$xpcc
 extern AssertionHandler __assertion_table_end __asm("section$end$__DATA$xpcc_assertion");
 ```
 
+**3 Feb 2018 -- Update:** We define some default assertion handlers inside the xpcc library source, which is first compiled into the `libxpcc.a` archive, then linked against by the application. However, the linker by default only searches archives for *referenced* symbols, which our handlers are obviously not, and therefore these handlers are omitted from the final executable. This can cause some very subtle and annoying bugs!
+
+The solution is to wrap the archive in `-Wl,--whole-archive -lxpcc -Wl,--no-whole-archive`. The [GNU ld documentation](https://sourceware.org/binutils/docs/ld/Options.html#Options) describes this quite well: "For each archive mentioned on the command line after the `--whole-archive` option, include every object file in the archive in the link, rather than searching the archive for the required object files."
+
+Note that this just makes all symbols *visible* to the linker, it does not force inclusion of all symbols, especially not if you pass the `--gc-sections` option as well.
+
+
 #### AVRs are annoying
 
 The most pain was getting this to work on AVRs though. The issue is that their address space is limited to 16-bit and instructions and data are placed into physically separate memories each with their own 16-bit address space. Or in other words, [AVRs implement a Harvard architecture](https://en.wikipedia.org/wiki/Harvard_architecture) and one does not simply read data from the instruction memory on a Harvard architecture. AVRs load their read-only data from Flash to SRAM at boot time, *including all strings*, since there is no way of telling from a 16-bit address whether it points to the instruction or the data memory. Hey, don't look at me, it's a 8-bit CPU, you get what you pay for!
