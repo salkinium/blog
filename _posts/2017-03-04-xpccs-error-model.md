@@ -12,7 +12,7 @@ So what can we do that is simple to use and efficient on AVR and Cortex-M device
 
 ## The Problem
 
-[Our robots](http://www.roboterclub.rwth-aachen.de/cms/index.php/roboter) are controlled by a number of software components that communicate by Remote Procedure Calls (PRCs) via an event loop locally or over CAN.
+[The RCA robots](http://www.roboterclub.rwth-aachen.de/) are controlled by a number of software components that communicate by Remote Procedure Calls (PRCs) via an event loop locally or over CAN.
 We call this Cross Platform Component Communication (XPCC) and it's an under-appreciated (and under-documented) [part of the xpcc framework](http://xpcc.io/api/group__xpcc__comm.html).
 It allows us to distribute components over many microcontrollers if needed and helps us understand what is happening in the robot at runtime by listening in on the CAN bus.
 
