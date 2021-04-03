@@ -1,76 +1,88 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely edit after that. If you find
-# yourself editing this file very often, consider using Jekyll's data files
-# feature for the data you need to update frequently.
-#
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'jekyll serve'. If you change this file, please restart the server process.
-
 # Site settings
-# These are used to personalize your new site. If you look in the HTML files,
-# you will see them accessed via {{ site.title }}, {{ site.author }}, and so on.
-# You can create any custom variable you would like, and they will be accessible
-# in the templates via {{ site.myvariable }}.
-title: embedded entanglement
-author: Niklas Hauser
-description: reflecting on embedded software development
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://blog.salkinium.com" # the base hostname & protocol for your site, e.g. http://example.com
-lang: en
-timezone: UTC
-exclude:
-  - Gemfile
-  - Gemfile.lock
-  - README.md
-  - LICENSE.txt
-  - CHANGELOG.md
-  - jekyll-whiteglass.gemspec
-  - Rakefile
-  - vendor
-  - CNAME
+title: embedded entanglement # site title
+description: reflecting on embedded software development # site description
+lang: en-US # default lang
+timezone: Europe/Berlin # set your timezone
+mode: dark # default theme "dark" | "light"
 
-# Social media
-twitter_username: salkinium
-twitter_image:
-facebook_app_id:
-facebook_image:
-google_analytics: UA-92953879-1
+# Profile settings
+author:
+  name: Niklas Hauser # author name
+  bio: >- # tell to the world
+    µC lover • modm.io maintainer • datasheet connoisseur • tool meta-programmer •
+    railway signaling • maybe human • sometimes ranting • drunk on sleep • nerdy
+  username: salkinium # general username
+  github: salkinium # github username
+  twitter: salkinium # twitter username
+  email: niklas@salkinium.com # email adress
+  avatar: /assets/img/avatar.png # change with your own avatar
 
-# Plugins
-gems:
-  - jekyll-archives
-  - jekyll-paginate
-  - jekyll-sitemap
-
-# Build settings
-markdown: kramdown
-# markdown:         redcarpet
-excerpt_separator: <!--more-->
-
-# Outputting
+# URL settings
+url: "http://blog.salkinium.com" #
+baseurl:
 permalink: /:title/
-paginate_path: /posts/:num/
-paginate: 5
+google_analytics: # leave it blank if not wish
+fb_appid:
+
+# Collection setting
+collections:
+  posts:
+    output: true
 
 # Markdown settings
-redcarpet:
-  extensions: ["smart", "no_intra_emphasis", "tables", "fenced_code_blocks", "autolink", "strikethrough", "superscript", "footnotes", "lax_spacing"]
+markdown: kramdown
+highlighter: rouge
 kramdown:
-  auto_ids: true
-  enable_coderay: false
-  entity_output: as_char
-  footnote_nr: 1
-  smart_quotes: lsquo,rsquo,ldquo,rdquo
-  toc_levels: 1..6
-  parse_block_html: true
+  syntax_highlighter: rouge
+excerpt_separator: <!--more-->
 
+# Default front matter
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: post
+      comments: false
 
-# jekyll-archives
-jekyll-archives:
-  enabled:
-    - categories
-  layout: category_archives
-  permalinks:
-    category: /categories/:name/
+# Jekyll Compose default front matter
+jekyll_compose:
+  post_default_front_matter:
+    modified:
+    tags: []
+    description:
+  draft_default_front_matter:
+    modified:
+    tags: []
+    description:
+
+# Homepage limit posts
+number_of_posts: 10
+
+# Build settings
+# theme: klise
+sass:
+  style: compressed
+
+include:
+  - _redirects
+  - .htaccess
+
+exclude:
+  - CNAME
+  - Gemfile
+  - Gemfile.lock
+  - LICENSE
+  - CHANGELOG.md
+  - README.md
+  - node_modules
+  - CODE_OF_CONDUCT.md
+  - CONTRIBUTING.md
+  - lighthouse.png
+  - klise-*.gem
+  - klise.gemspec
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-postfiles
