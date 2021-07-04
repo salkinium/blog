@@ -8,6 +8,8 @@ Until now xpcc's way of dealing with failures included using `static_assert` at 
 
 So what can we do that is simple to use and efficient on AVR and Cortex-M devices, but still powerful enough to be useful? It's time we thought about our error model.
 
+**Update 2019: For [xpcc's successor modm](https://modm.io) this error model got improved for efficiency and flexibility, however, the main principle is still the same. [See the `modm:architecture:assert` docs](https://modm.io/reference/module/modm-architecture-assert).**
+
 <!--more-->
 
 ## The Problem

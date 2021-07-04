@@ -234,7 +234,7 @@ body[data-theme="dark"] {
     .solution:hover {
       color: $dark-text-link-blue-active;
     }
-  }  
+  }
 
   .search-article {
     input[type="search"] {
@@ -243,5 +243,14 @@ body[data-theme="dark"] {
         color: rgba(128,128,128,0.8);
       }
     }
+  }
+
+  img[invertible] {
+    -webkit-filter: invert(1);
+            filter: invert(1);
+  }
+  img[dimmable] {
+    -webkit-filter: brightness(50%);
+            filter: brightness(50%);
   }
 }

@@ -154,7 +154,9 @@ Registers can be made up of three things:
 
 Example of an 8bit register: Control
 
-![Control Register](control_register.svg)
+<center>
+<img invertible src="control_register.svg"/>
+</center>
 
 - Bit *7*: Enable
 - Bit *6*: Full Scale

@@ -34,7 +34,7 @@ This type of prescaler is often used to clock peripherals which do not require a
 It's behaviour is described by this formula:
 
 <center markdown="block">
-![](prescaler_power_of_two.svg)
+<img invertible src="prescaler_power_of_two.svg"/>
 </center>
 
 #### Linear
@@ -43,7 +43,7 @@ Linear prescalers are the most common type of prescaler found in microcontroller
 Since the divisor must not be zero for obvious reasons, the input values are either mapped so that writing a zero turns the peripheral off, or the hardware adds a one to the input (mapping 0⟶1, 1⟶2, etc…).
 
 <center markdown="block">
-![](prescaler_linear.svg)
+<img invertible src="prescaler_linear.svg"/>
 </center>
 
 #### Fractional
@@ -53,7 +53,7 @@ The divisor is usually formatted as a fixed point binary fractional.
 It must be understood that these prescalers cannot generate a *true* fractional output frequency, but use a [dual-modulus hardware logic](http://en.wikipedia.org/wiki/Dual-modulus_prescaler), so that the desired output frequency is met **on average**!
 
 <center markdown="block">
-![](prescaler_fractional.svg)
+<img invertible src="prescaler_fractional.svg"/>
 </center>
 
 #### Analysis
@@ -61,7 +61,7 @@ It must be understood that these prescalers cannot generate a *true* fractional 
 Here is the graphical comparison of these three prescaler functions, plotting 10 input values onto the normalized output value for all three functions. The power-of-two prescaler is light gray, the linear prescaler dark gray and is overlaid on the fractional prescaler:
 
 <center markdown="block">
-![](prescaler_graphs.svg)
+<img invertible src="prescaler_graphs.svg"/>
 </center>
 
 There are three very interesting observations to be made:
@@ -86,7 +86,7 @@ Between two generatable baudrates *B<sub>n</sub>* and *B<sub>n+1</sub>* lies a h
 The formula for calculating this half-point is trivial:
 
 <center markdown="block">
-![](prescaler_half_point.svg)
+<img invertible src="prescaler_half_point.svg"/>
 </center>
 
 So the general approach here is to find an divisor pair (*n, n+1*) so that the desired baudrate *B<sub>d</sub>* lies between *B<sub>n</sub>* and *B<sub>n+1</sub>* and then choose the divisor whose baudrate is closer to the desired one.
@@ -101,19 +101,19 @@ However, with some more math we can calculate the exact divisor *ratio* of this 
 We start with the power-of-two prescaler, where *B<sub>n+1</sub>* is always half of *B<sub>n</sub>*:
 
 <center markdown="block">
-![](prescaler_p2_1.svg)
+<img invertible src="prescaler_p2_1.svg"/>
 </center>
 
 By entering these into our half-point formula we get:
 
 <center markdown="block">
-![](prescaler_p2_2.svg)
+<img invertible src="prescaler_p2_2.svg"/>
 </center>
 
 However, since we wanted a divisor and not a baudrate, we divide the input frequency with the half-point baudrate:
 
 <center markdown="block">
-![](prescaler_p2_3.svg)
+<img invertible src="prescaler_p2_3.svg"/>
 </center>
 
 Choosing the divisor with the least error for any desired baudrate becomes easy now.
@@ -144,19 +144,19 @@ Unfortunately this elegant solution is not available for the properties of the l
 Here *B<sub>n</sub>* and *B<sub>n+1</sub>* are defined as follows:
 
 <center markdown="block">
-![](prescaler_lin_1.svg)
+<img invertible src="prescaler_lin_1.svg"/>
 </center>
 
 Using these definition in our half-point formula gets us nowhere really:
 
 <center markdown="block">
-![](prescaler_lin_2.svg)
+<img invertible src="prescaler_lin_2.svg"/>
 </center>
 
 And the half-point divisor is just insulting:
 
 <center markdown="block">
-![](prescaler_lin_3.svg)
+<img invertible src="prescaler_lin_3.svg"/>
 </center>
 
 However, a quick look at the value table of this formula does reinforce a suspicion:
@@ -176,7 +176,7 @@ However, a quick look at the value table of this formula does reinforce a suspic
 The divisors seem to approach *(n + 1/2)* for larger values, which is indeed the case and becomes clear when looking at the series expansion for *n* to infinity:
 
 <center markdown="block">
-![](prescaler_lin_4.svg)
+<img invertible src="prescaler_lin_4.svg"/>
 </center>
 
 Not that this is of any help to us, it's just nice to know ☺
@@ -227,7 +227,7 @@ Although these algorithms will choose the divisor with the least baudrate error,
 We are only looking at relative error which is defined as:
 
 <center markdown="block">
-![](prescaler_relative_error.svg)
+<img invertible src="prescaler_relative_error.svg"/>
 </center>
 
 A set of default tolerances should be chosen so that without any effort required from the programmer, they act as a useful guard against unreasonable baudrate errors.
@@ -243,7 +243,7 @@ However, asynchronous protocols simply do not allow for much tolerance.
 The relative baudrate error tolerance for UART with 8N1 configuration (8 databits, 1 startbit and 1 stopbit) as shown below is only ±5%. The sample point of the stop bit may only shift by at most ±*t<sub>Symbol</sub> /2* and with 10 bits to read, one *t<sub>Symbol</sub>* equals one tenth of the symbol transmission time, hence a relative tolerance of ±5%. For example, the tolerance for 7-bit transfers (9 baudtimes) increases to ±5.56%.
 
 <center markdown="block">
-![](prescaler_uart.svg){: width="500"}
+<img invertible src="prescaler_uart.svg"/>{: width="500"}
 </center>
 
 However, since both transmitter and receiver may not generate the exact baudrate, the error must not exceed **±5% in total**, which in the worst case (one too fast, one too slow) imposes a tight allowed deviation of +2.5% and -2.5% on the modules respectively.

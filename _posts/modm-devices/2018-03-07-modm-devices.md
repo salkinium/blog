@@ -200,7 +200,7 @@ Don't do this! I did get the job done, but I wasted two weeks of my life with th
 crap and even though I was being really diligent, I still made a lot of mistakes.
 
 <center markdown="block">
-![](atmega_io.png)
+<img dimmable src="atmega_io.png"/>
 
 Ah, the insanities of youth 🙄
 </center>
@@ -237,7 +237,7 @@ written in Java (those "beautiful" GUI elements give it away). Nevertheless, Cub
 indeed is a very useful application, giving you a number of visual configuration editors:
 
 <center markdown="block">
-![](stm32f103_cube_gpio.png)
+<img dimmable src="stm32f103_cube_gpio.png"/>
 
 Configuring the USART1_TX signal on pin PB6 on the popular STM32F103RBT.
 </center>
@@ -339,9 +339,7 @@ So `USART1_TX` maps to pin PB6 with `USART1_REMAP1` or pin PA9 with `USART1_REMA
 The STM32F1 series remap signals either in (overlapping) groups or not at all.
 This is controlled by the `AFIO_MAPRx` registers, where we can find PB6/PA9 again:
 
-<center markdown="block">
-![](stm32f103_usart1_remap.png)
-</center>
+<img invertible src="stm32f103_usart1_remap.png"/>
 
 The `__HAL_AFIO_REMAP_USART1_ENABLE` in the XML is actually just a C function name,
 and is placed by CubeMX in the generated init code.
@@ -437,9 +435,7 @@ to be CubeMX for its fairly narrow goal of code generation.
 Let's look at another very interesting data source in CubeMX: the clock
 configuration wizard:
 
-<center markdown="block">
-![](stm32f103_cube_clock.gif)
-</center>
+<img dimmable src="stm32f103_cube_clock.gif"/>
 
 What's so interesting about this configurator is that it *knows* what the maximum
 frequencies of the respective clock segments are, and more importantly, how to
@@ -447,9 +443,7 @@ set the prescalers to resolve these issues and this for every device.
 You surely know where this is going by know. Yup, it's backed by data, and here
 is what it looks like rendered with graphviz.
 
-<center markdown="block">
-![](stm32f100_clock.png)
-</center>
+<img invertible src="stm32f100_clock.png"/>
 
 Here is a beautified excerpt from `plugins/clock/STM32F102.xml`, which only
 shows the connections highlighted in red. Note how the text in the nodes maps to
@@ -625,7 +619,7 @@ Note how we forgot the `t6` suffix. If we compare this with the documentation
 on the ST ordering information scheme, you'll see why this was a huge mistake:
 
 <center markdown="block">
-<img src="stm32f1_ordering_info_scheme.png" width="75%">
+<img invertible src="stm32f1_ordering_info_scheme.png" width="75%">
 </center>
 
 Yup, that's right, we forgot to encode the package type, causing the DFG to select
@@ -649,7 +643,7 @@ And then all hell broke loose when I added support for parsing the STM32F1 devic
 family, which couples peripheral features to memory size _and(!)_ pin count:
 
 <center markdown="block">
-<img src="stm32f1_feature_package.png" width="80%"><br>
+<img invertible src="stm32f1_feature_package.png" width="80%"><br>
 "32 KB Flash<sup>(1)</sup>" aka. this table isn't complicated enough already
 </center>
 
@@ -715,7 +709,7 @@ cluster patterns of pin count, memory size and package are _very_ regular and
 often explicitly called out. We wanted to reflect this in our data structure too.
 
 <center markdown="block">
-![](stm32f4x9_clusters.jpg)<br>
+<img dimmable src="stm32f4x9_clusters.jpg"/><br>
 This [STM32F4x9 feature matrix](http://www.st.com/en/microcontrollers/stm32f469-479.html) is extremely regular.
 </center>
 
@@ -852,12 +846,12 @@ And according to this data set they seem to be unavailable for the LQFP100
 package? Hm, better ~~call Saul~~ check the datasheets:
 
 <center markdown="block">
-<img src="stm32f4xx_fmc_sdcke0.png" width="65%">
+<img invertible src="stm32f4xx_fmc_sdcke0.png" width="65%">
 
-![](stm32f4xx_fmc_sdcke0_af.png)
+<img invertible src="stm32f4xx_fmc_sdcke0_af.png"><br>
 Huh, but the signals _do_ exist for the LQFP100 package!?
 
-![](stm32f4xx_fmc_100.png)
+<img invertible src="stm32f4xx_fmc_100.png"><br>
 "FMC: Yes<sup>(1)</sup>". Oh, FFS!
 </center>
 
@@ -867,7 +861,7 @@ everything is fine, I guess? Nothing to see here folks, move along,
 the filter algorithm encoded this shit correctly. 🙃
 
 <center markdown="block">
-<img src="do_not_want.gif" width="30%">
+<img dimmable src="do_not_want.gif" width="30%">
 </center>
 
 Anyways, I like our device file format a lot, since it describes the device's
