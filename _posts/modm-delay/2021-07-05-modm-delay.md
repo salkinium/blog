@@ -360,9 +360,7 @@ A detailed version of nanosecond delay graph at high frequencies from 0ns to 100
 
 <img invertible src="us_boot.svg"/>
 
-For completeness we've also measured microsecond delay from 0us to 1000us at boot frequency. The results are very accurate with a minimum delay of 1us on all devices except on the STM32L0 and STM32L1. They boot at 2.097MHz, where we use the fractional multiplication and shift to approximate 2.125MHz with an error of ~2%. Unfortunately on these devices millisecond delay will also have a 2% error, since they use microsecond delay under the hood as discussed.
-
-For microsecond delay at high frequency the measurements show no deviation at all, so that the graph is just a boring 1:1 line and therefore omitted.
+For completeness we've also measured microsecond delay from 0us to 1000us at both boot and high frequency. The results are very accurate with a minimum delay of 1us on all devices and show no signifant error due to our fractional frequency encoding.
 
 
 # Conclusion
