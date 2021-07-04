@@ -54,7 +54,7 @@ This is obviously way too slow to compute, but we first need to understand how t
 
 # Counting Cycles
 
-Wouldn't it be nice if we could just delegate counting cycles to some hardware counter? Well, look no further than the Data Watchpoint and Trace (DWT) peripheral and its 32-bit `CYCCNT` free running at CPU frequency!
+Wouldn't it be nice if we could just delegate counting cycles to some hardware counter? Well, look no further than the [Data Watchpoint and Trace Unit (DWT)](https://developer.arm.com/documentation/ddi0439/b/Data-Watchpoint-and-Trace-Unit/DWT-functional-description?lang=en) and its 32-bit `CYCCNT` counter free running at CPU frequency!
 
 ```cpp
 // Enable Tracing Debug Unit
@@ -158,7 +158,7 @@ void modm::delay_ns(uint32_t ns)
 }
 ```
 
-This reduces the overhead by eliminating the unnecessary jump and loading a literal from Flash that much closer to the execution site (here *0x35c - 0x2cc = 0x90 = 144 bytes*) and therefore most likely already in the cache:
+This reduces the overhead by eliminating the unnecessary jump and loading a literal from Flash that much closer to the execution site (here just `#148` bytes) and therefore most likely already in the cache:
 
 ```
         modm::delay_ns(ns);
