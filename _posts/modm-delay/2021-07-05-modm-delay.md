@@ -325,8 +325,8 @@ In total 19 devices were tested by passing the `modm::delay_ns()` function durat
 | STM32F469  | cm4f |  4 | 16    | 1000ns @ 16     MHz |  88ns @ 180 MHz |
 | STM32F746  | cm7fd|  1 | 19    | 1187ns @ 16     MHz |  87ns @ 216 MHz |
 | STM32G071  | cm0+ |  3 | 16/18 | 1000ns @ 16     MHz | 281ns @  64 MHz |
-| STM32G474  | cm4f |  3 | 17    | 1062ns @ 16     MHz | 100ns @ 170 MHz |
-| STM32L031  | cm0  |  4 | 16/17 | 7629ns @  2.097 MHz | 531ns @  32 MHz |
+| STM32G474  | cm4f |  3 | 17/21 | 1062ns @ 16     MHz | 123ns @ 170 MHz |
+| STM32L031  | cm0  |  3 | 16/17 | 7629ns @  2.097 MHz | 531ns @  32 MHz |
 | STM32L152  | cm3  |  4 | 16/17 | 7629ns @  2.097 MHz | 531ns @  32 MHz |
 | STM32L432  | cm4f |  3 | 13/15 |  812ns @ 16     MHz | 162ns @  80 MHz |
 | STM32L476  | cm4f |  3 | 13/15 |  812ns @ 16     MHz | 312ns @  48 MHz |
@@ -337,10 +337,11 @@ The absolute minimum delay we can achieve is ~90ns and only on devices with a fa
 
 The graph of nanosecond delay at boot frequency shows several interesting points:
 
-- The above mentioned minimum delays are very clear, particularly the ~7600ns minimum delay for the STM32L0 and STM32L1 which boot at only ~2MHz.
-- A ~600ns offset on AVR: This is not surprising as our implementation does not compensate for the calling overhead at all.
-- A percentual error on AVR: At 16MHz the correct divider would be 250 for a 4-cycle loop, however, we're shifting 8 = divide by 256, which is a 2.5% error. For other frequencies this error will be much higher.
-- An offset on STM32F7: The correct offset compensation would be ~26 loops, however our "shift multiplication" can only do 16 or 32 loops, hence this offset. The Cortex-M7 has built-in branch prediction, perhaps that explains the small irregularity at the beginning.
+- The above mentioned minimum delays are very clear, particularly the ~7600ns minimum delay for the STM32L0 and STM32L1.
+- An offset error for STM32L0/L1 with different stepping coarseness.
+- A ~600ns offset error on AVR: This is not surprising as our implementation does not compensate for the calling overhead at all.
+- A 2.5% error on AVR: At 16MHz the correct divider would be 250 for a 4-cycle loop, however, we're shifting 8 = divide by 256, which is a 2.5% error. For other frequencies this error will be much higher.
+- An offset error on STM32F7: The correct offset compensation would be ~26 loops, however our "shift multiplication" can only do 16 or 32 loops, hence this offset. The Cortex-M7 has built-in branch prediction, perhaps that explains the small irregularity at the beginning.
 - The coarseness of the stepping varies, showing the effect of different clock speeds and cycles per loop.
 - Most implemementations follow the ideal delay line very closely.
 
@@ -352,15 +353,17 @@ The notable exception is the STM32F7 implementation, which has a significant ~7.
 
 The delay implementation on other devices has the same problem, however, since the loop takes 3-4 cycles the error is much smaller. For example, the 3-cycle loop on the STM32G4 running at a comparable 170MHz takes ~17.6ns (=3ns/170MHz) ≈ 18ns per loop, which is an error of just ~2%. In contrast, the 4-cycle loop on the 64MHz STM32F1 takes 62.5ns (=4ns/64MHz) ≈ 63ns with an error of ~1%.
 
-It becomes clear that the subtraction spreads the rounding error over 3-4 cycles which essentially functions as a fractional integer division. So an easy fix for the 1-cycle loop error on the STM32F7 is to lengthen the loop with some NOPs to reduce the overall error at the cost of resolution. I will leave this for a future self to solve though.
+It becomes clear that the subtraction spreads the rounding error over 3-4 cycles which essentially functions as a fractional integer division. So an easy fix for the 1-cycle loop error on the STM32F7 is to lengthen the loop with some NOPs to reduce the overall error at the cost of resolution. I will leave this for a future self to test though.
 
 <img invertible src="ns_high_detail.svg"/>
 
-A detailed version of nanosecond delay graph at high frequencies from 0ns to 1000ns shows the same properties as the boot frequency graph, however with much smaller minimal delays and stepping. Note the non-linear STM32F7 delay curve.
+A detailed version of nanosecond delay graph at high frequencies from 0ns to 1000ns shows the same properties as the boot frequency graph, however with much smaller minimal delays and stepping.
 
 <img invertible src="us_boot.svg"/>
 
-For completeness we've also measured microsecond delay from 0us to 1000us at both boot and high frequency. The results are very accurate with a minimum delay of 1us on all devices and show no signifant error due to our fractional frequency encoding.
+For completeness we've also measured microsecond delay from 0us to 1000us at both boot frequency. The results have almost no error over time due to our fractional frequency encoding, however, we don't compensate for calling overhead for the non-DWT implementation, therefore ARMv6-M devices have an slight offset error. In future this could be improved if required.
+
+The microsecond delay measurements at high frequency shows no errors at all and are therefore omitted.
 
 
 # Conclusion
@@ -377,4 +380,4 @@ The code presented here is slightly simplified, so please also check the real de
 
 The [example used to measure the delay in hardware can be found here](https://github.com/modm-io/modm/blob/develop/examples/generic/delay/main.cpp).
 
-
+Special thanks to [Christopher Durand](https://github.com/chris-durand) for helping with the measurements!
