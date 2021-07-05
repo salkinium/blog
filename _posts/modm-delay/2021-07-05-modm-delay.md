@@ -188,7 +188,7 @@ modm::platform::delay_ns(uint32_t ns) // passed in r0
     "1:  subs r0, r0, r2"       // subtract the nanoseconds per loop
         "bpl  1b"               // loop while nanoseconds are positive
 
-        "bx lr"                   // return to execution
+        "bx lr"                 // return to execution
     );
 }
 ```
@@ -379,5 +379,7 @@ The code presented here is slightly simplified, so please also check the real de
 - [Cortex-M `modm::delay_us` and `modm::delay_ns` using Cycle Counting](https://github.com/modm-io/modm/blob/develop/src/modm/platform/core/cortex/delay_ns.cpp.in)
 
 The [example used to measure the delay in hardware can be found here](https://github.com/modm-io/modm/blob/develop/examples/generic/delay/main.cpp).
+
+The [data of all measurements and graphing scripts can be found here](https://github.com/salkinium/blog/tree/master/_posts/modm-delay).
 
 Special thanks to [Christopher Durand](https://github.com/chris-durand) for helping with the measurements!
