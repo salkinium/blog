@@ -145,7 +145,7 @@ void modm_fastcode modm::delay_ns(uint32_t us)
 
 Since Flash access is very slow (up to a dozen wait states for fast devices), vendors supply a cache implementation with a large, but limited buffer size (the STM32F4 cache has 64 cache lines of 128-bit = 1kB!). So the jump to a veneer outside of the 1kB range spends many cycles just waiting on the Flash and this time depends on the current clock configuration. Can we do better? Yes, with inline assembly!
 
-We move the actual implementation to `modm::platform::delay_ns` and then use an forced-inline forwarding function that uses the [`blx` instruction](https://www.keil.com/support/man/docs/armasm/armasm_dom1361289866046.htm) to jump there directly instead of through a veneer:
+We move the actual implementation to `modm::platform::delay_ns` and then use a forced-inline forwarding function that uses the [`blx` instruction](https://www.keil.com/support/man/docs/armasm/armasm_dom1361289866046.htm) to jump there directly instead of through a veneer:
 
 ```cpp
 modm_always_inline
@@ -158,7 +158,7 @@ void modm::delay_ns(uint32_t ns)
 }
 ```
 
-This reduces the overhead by eliminating the unnecessary jump and loading a literal from Flash that much closer to the execution site (here just `#148` bytes) and therefore most likely already in the cache:
+This reduces the overhead by eliminating the unnecessary jump and loading a literal from Flash that's stored much closer to the execution site (here its just `#148` bytes away) and therefore most likely already in the cache:
 
 ```
         modm::delay_ns(ns);
