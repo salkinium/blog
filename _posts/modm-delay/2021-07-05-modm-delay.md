@@ -307,29 +307,32 @@ const uint16_t stop = TCNT1;
 const uint16_t cycles = (stop - start) - 4;
 ```
 
-In total 19 devices were tested by passing the `modm::delay_ns()` function durations from 0ns to 10000ns in 10ns steps. The Cortex-M devices were tested once at boot frequency and then again at their highest frequency.
+In total 20 devices were tested by passing the `modm::delay_ns()` function durations from 0ns to 10000ns in 10ns steps. The Cortex-M devices were tested once at boot frequency and then again at their highest frequency.
 
 | Device | Core Type | Cycles per Loop | Minimum Cycles at Boot/High Frequency | Minimum Delay at Boot Frequency | Minimum Delay at High Frequency |
-|:-----------|:-----|---:|:-----:|--------------------:|----------------:|
-| ATMEGA2560 | avr8 |  4 | 16    | 1000ns @ 16     MHz |                 |
-| SAMD21     | cm0+ |  3 | 15    |                     | 312ns @  48 MHz |
-| STM32F072  | cm0  |  4 | 18/19 | 1125ns @ 16     MHz | 395ns @  48 MHz |
-| STM32F091  | cm0  |  4 | 18/19 | 1125ns @ 16     MHz | 395ns @  48 MHz |
-| STM32F103  | cm3  |  4 | 16    | 2000ns @  8     MHz | 250ns @  64 MHz |
-| STM32F303  | cm4f |  3 | 13    | 1625ns @  8     MHz | 203ns @  64 MHz |
-| STM32F334  | cm4f |  3 | 13    | 1625ns @  8     MHz | 203ns @  64 MHz |
-| STM32F401  | cm4f |  4 | 16    | 1000ns @ 16     MHz | 190ns @  84 MHz |
-| STM32F411  | cm4f |  4 | 16    | 1000ns @ 16     MHz | 166ns @  96 MHz |
-| STM32F429  | cm4f |  4 | 16    | 1000ns @ 16     MHz |  95ns @ 168 MHz |
-| STM32F446  | cm4f |  4 | 16    | 1000ns @ 16     MHz |  88ns @ 180 MHz |
-| STM32F469  | cm4f |  4 | 16    | 1000ns @ 16     MHz |  88ns @ 180 MHz |
-| STM32F746  | cm7fd|  1 | 19    | 1187ns @ 16     MHz |  87ns @ 216 MHz |
-| STM32G071  | cm0+ |  3 | 16/18 | 1000ns @ 16     MHz | 281ns @  64 MHz |
-| STM32G474  | cm4f |  3 | 17/21 | 1062ns @ 16     MHz | 123ns @ 170 MHz |
-| STM32L031  | cm0  |  3 | 16/17 | 7629ns @  2.097 MHz | 531ns @  32 MHz |
-| STM32L152  | cm3  |  4 | 16/17 | 7629ns @  2.097 MHz | 531ns @  32 MHz |
-| STM32L432  | cm4f |  3 | 13/15 |  812ns @ 16     MHz | 162ns @  80 MHz |
-| STM32L476  | cm4f |  3 | 13/15 |  812ns @ 16     MHz | 312ns @  48 MHz |
+|:-----------|:-----|---:|:-----:|--------------------:|------------------:|
+| ATMEGA2560 | avr8 |  4 | 16    | 1000ns @ 16     MHz |                   |
+| SAMD21     | cm0+ |  3 | 15    |                     | 312ns @  48 MHz   |
+| STM32F072  | cm0  |  4 | 18/19 | 1125ns @ 16     MHz | 395ns @  48 MHz   |
+| STM32F091  | cm0  |  4 | 18/19 | 1125ns @ 16     MHz | 395ns @  48 MHz   |
+| STM32F103  | cm3  |  4 | 16    | 2000ns @  8     MHz | 250ns @  64 MHz   |
+| STM32F303  | cm4f |  3 | 13    | 1625ns @  8     MHz | 203ns @  64 MHz   |
+| STM32F334  | cm4f |  3 | 13    | 1625ns @  8     MHz | 203ns @  64 MHz   |
+| STM32F401  | cm4f |  4 | 16    | 1000ns @ 16     MHz | 190ns @  84 MHz   |
+| STM32F411  | cm4f |  4 | 16    | 1000ns @ 16     MHz | 166ns @  96 MHz   |
+| STM32F429  | cm4f |  4 | 16    | 1000ns @ 16     MHz |  95ns @ 168 MHz\* |
+| STM32F446  | cm4f |  4 | 16    | 1000ns @ 16     MHz |  88ns @ 180 MHz   |
+| STM32F469  | cm4f |  4 | 16    | 1000ns @ 16     MHz |  88ns @ 180 MHz   |
+| STM32F746  | cm7fd|  1 | 19    | 1187ns @ 16     MHz |  87ns @ 216 MHz   |
+| STM32G071  | cm0+ |  3 | 16/18 | 1000ns @ 16     MHz | 281ns @  64 MHz   |
+| STM32G474  | cm4f |  3 | 17/21 | 1062ns @ 16     MHz | 123ns @ 170 MHz   |
+| STM32H743  | cm7fd|  1 | 21    |  328ns @ 64     MHz |  87ns @ 240 MHz\* |
+| STM32L031  | cm0  |  3 | 16/17 | 7629ns @  2.097 MHz | 531ns @  32 MHz   |
+| STM32L152  | cm3  |  4 | 16/17 | 7629ns @  2.097 MHz | 531ns @  32 MHz   |
+| STM32L432  | cm4f |  3 | 13/15 |  812ns @ 16     MHz | 162ns @  80 MHz   |
+| STM32L476  | cm4f |  3 | 13/15 |  812ns @ 16     MHz | 312ns @  48 MHz\* |
+
+<center>(* lower than maximum due to software limitations)</center>
 
 The absolute minimum delay we can achieve is ~90ns and only on devices with a fast clock. You can clearly see the effects of the additional flash wait-states despite the cache on some devices after switching to high frequency.
 
@@ -342,6 +345,7 @@ The graph of nanosecond delay at boot frequency shows several interesting points
 - A ~600ns offset error on AVR: This is not surprising as our implementation does not compensate for the calling overhead at all.
 - A 2.5% error on AVR: At 16MHz the correct divider would be 250 for a 4-cycle loop, however, we're shifting 8 = divide by 256, which is a 2.5% error. For other frequencies this error will be much higher.
 - An offset error on STM32F7: The correct offset compensation would be ~26 loops, however our "shift multiplication" can only do 16 or 32 loops, hence this offset. The Cortex-M7 has built-in branch prediction, perhaps that explains the small irregularity at the beginning.
+- A fast boot clock of 64MHz on the STM32H7 resulting in the lowest minimum delay at boot, however, with a ~3% error over time.
 - The coarseness of the stepping varies, showing the effect of different clock speeds and cycles per loop.
 - Most implemementations follow the ideal delay line very closely.
 
@@ -349,7 +353,7 @@ The graph of nanosecond delay at boot frequency shows several interesting points
 
 The graph of nanosecond delay at high frequency shows that all implementations follow the ideal delay very precisely with no significant offset or error.
 
-The notable exception is the STM32F7 implementation, which has a significant ~7.5% error over time. Running at 216MHz a 1-cycle loop takes ~4.6ns which gets rounded up to 5ns which is then subtracted on every 1-cycle loop, thus yielding this error. This creates an interesting failure mode for this delay algorithm: At around 667MHz the error is highest at 50%, since a 1.5ns per loop (=1ns/667MHz) delay must be rounded to either 1ns or 2ns. Currently no STM32 runs at that high a speed, however, the STM32H7 can run at at 400MHz (≤480MHz), where the error would still be 25%.
+The notable exceptions are the Cortex-M7 devices STM32H7 and STM32F7 with the latter having a significant ~7.5% error over time. Running at 216MHz a 1-cycle loop takes ~4.6ns which gets rounded up to 5ns which is then subtracted on every 1-cycle loop, thus yielding this error. This creates an interesting failure mode for this delay algorithm: At around 667MHz the error is highest at 50%, since a 1.5ns per loop (=1ns/667MHz) delay must be rounded to either 1ns or 2ns. Currently no STM32 runs at that high a speed, however, the STM32H7 can run at up to 550MHz and therefore also at a "slower" 400MHz where the error would be 25% (= 2.5ns per loop).
 
 The delay implementation on other devices has the same problem, however, since the loop takes 3-4 cycles the error is much smaller. For example, the 3-cycle loop on the STM32G4 running at a comparable 170MHz takes ~17.6ns (=3ns/170MHz) ≈ 18ns per loop, which is an error of just ~2%. In contrast, the 4-cycle loop on the 64MHz STM32F1 takes 62.5ns (=4ns/64MHz) ≈ 63ns with an error of ~1%.
 

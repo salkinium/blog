@@ -24,23 +24,21 @@ def parse_table(text):
         return (cycles * (1e9 if dtype == "ns" else 1e6)) / clock;
     data = []
     for line in lines[3:]:
-        values = [int(v.strip()) for v in line.rstrip(">").split(" | ")]
+        values = [int(v.strip()) for v in line.rstrip("><").split(" | ")]
         data.append( (values[0], conv(values[0], values[2]), values[2]) )
 
     return (dtype, clock, data)
 
 
-def plot_table(device_filter, dtype_filter, clock_filter, delay_filter):
+def plot_table(filter_):
     global DATA
     for device, dtypes in DATA.items():
-        if not device_filter(device): continue;
         for dtype, clocks in dtypes.items():
-            if not dtype_filter(dtype): continue;
             for clock, delays in clocks.items():
-                if not clock_filter(clock): continue;
-                print(device, dtype, clock)
-                filtered = [d for d in delays if delay_filter(d)]
-                plt.plot([v[0] for v in filtered], [v[1] for v in filtered])
+                # print(device, dtype, clock)
+                filtered = [d for d in delays if filter_(device, dtype, clock, d)]
+                if filtered:
+                    plt.plot([v[0] for v in filtered], [v[1] for v in filtered])
 
 def dump_summary():
     global DATA
@@ -70,10 +68,10 @@ if __name__ == "__main__":
     # Large figure
     plt.figure(figsize=(20, 10))
     plt.axline((0, 0), (10000, 10000), color="gray")
-    plot_table(lambda d: True,
-               lambda t: t == "ns",
-               lambda c: c <= 16e6,
-               lambda d: d[0] <= 10000)
+    def ns_boot_filter(device, dtype, clock, delay):
+        return (delay[0] <= 10000 and dtype == "ns" and
+                (clock <= 16e6 or (device.startswith("h7") and clock <= 64e6)))
+    plot_table(ns_boot_filter)
     plt.xticks(fontsize=14); plt.yticks(fontsize=14)
     plt.xlabel("Input nanosecond delay", fontsize=16)
     plt.ylabel("Measured nanosecond delay", fontsize=16)
@@ -89,17 +87,20 @@ if __name__ == "__main__":
     plt.annotate("STM32F1 @ 8MHz", xy = (2480, 2000), fontsize=16, ha='left', va='top',
                  xytext=(3000, 1800), arrowprops = {"arrowstyle": "-"})
     plt.annotate("STM32L4 @ 16MHz", xy = (910, 812), fontsize=16,
-                 xytext=(1500, 300), arrowprops = {"arrowstyle": "-"})
-    plt.annotate("Ideal", xy = (400, 400), fontsize=16,
-                 xytext=(600, -100), arrowprops = {"arrowstyle": "-"})
+                 xytext=(1500, 400), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("STM32H7 @ 64MHz", xy = (500, 328), fontsize=16,
+                 xytext=(1000, -200), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("Ideal", xy = (100, 100), fontsize=16,
+                 xytext=(300, -200), arrowprops = {"arrowstyle": "-"})
     plt.savefig("ns_boot.svg", transparent=True, bbox_inches='tight')
 
     plt.clf()
     plt.axline((0, 0), (1000, 1000), color="gray")
-    plot_table(lambda d: True,
-               lambda t: t == "ns",
-               lambda c: c > 16e6,
-               lambda d: d[0] <= 1000)
+    def ns_high_detail_filter(device, dtype, clock, delay):
+        return (delay[0] <= 1000 and dtype == "ns" and
+                ((device.startswith("h7") and clock > 64e6) or
+                 (not device.startswith("h7") and clock > 16e6)))
+    plot_table(ns_high_detail_filter)
     plt.xticks(range(0, 1001, 100), fontsize=14); plt.yticks(range(0, 1001, 100), fontsize=14)
     plt.xlabel("Input nanosecond delay", fontsize=16)
     plt.ylabel("Measured nanosecond delay", fontsize=16)
@@ -116,9 +117,9 @@ if __name__ == "__main__":
                  xytext=(660, 460), arrowprops = {"arrowstyle": "-"})
     plt.annotate("STM32G4 @ 170MHz", xy = (248, 283), fontsize=16, ha='left', va='center',
                  xytext=(320, 190), arrowprops = {"arrowstyle": "-"})
-    plt.annotate("STM32F7 @ 216MHz", xy = (87, 122), fontsize=16, ha='left', va='center',
-                 xytext=(160, 100), arrowprops = {"arrowstyle": "-"})
-    plt.annotate("STM32F4 @ 180MHz", xy = (99, 88), fontsize=16, ha='left', va='top',
+    plt.annotate("STM32F7 @ 216MHz", xy = (164, 219), fontsize=16, ha='left', va='center',
+                 xytext=(220, 100), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("STM32H7 @ 240MHz", xy = (126, 87), fontsize=16, ha='left', va='top',
                  xytext=(120, 40), arrowprops = {"arrowstyle": "-"})
     plt.savefig("ns_high_detail.svg", transparent=True, bbox_inches='tight', pad_inches=0.01)
     # plt.show()
@@ -126,22 +127,25 @@ if __name__ == "__main__":
     plt.clf()
     # Smaller figure
     plt.figure(figsize=(20, 8.1))
-    plot_table(lambda d: True,
-               lambda t: t == "ns",
-               lambda c: c > 16e6,
-               lambda d: d[0] <= 10000)
+    def ns_high_filter(device, dtype, clock, delay):
+        return (delay[0] <= 10000 and dtype == "ns" and
+                ((device.startswith("h7") and clock > 64e6) or
+                 (not device.startswith("h7") and clock > 16e6)))
+    plot_table(ns_high_filter)
     plt.xticks(fontsize=14); plt.yticks(fontsize=14);
     plt.xlabel("Input nanosecond delay", fontsize=16)
     plt.ylabel("Measured nanosecond delay", fontsize=16)
     plt.annotate("STM32F7 @ 216MHz", xy = (8000, 7500), fontsize=16, ha='left', va='top',
                  xytext=(8000, 6500), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("STM32H7 @ 240MHz", xy = (8000, 8320), fontsize=16, ha='right', va='bottom',
+                 xytext=(7300, 8600), arrowprops = {"arrowstyle": "-"})
     plt.savefig("ns_high.svg", transparent=True, bbox_inches='tight', pad_inches=0.01)
 
     plt.clf()
-    plot_table(lambda d: True,
-               lambda t: t == "us",
-               lambda c: c <= 16e6,
-               lambda d: d[0] <= 1000)
+    def us_boot_filter(device, dtype, clock, delay):
+        return (delay[0] <= 1000 and dtype == "us" and
+                (clock <= 16e6 or (device.startswith("h7") and clock <= 64e6)))
+    plot_table(us_boot_filter)
     plt.xticks(fontsize=14); plt.yticks(fontsize=14)
     plt.xlabel("Input microsecond delay", fontsize=16)
     plt.ylabel("Measured microsecond delay", fontsize=16)
