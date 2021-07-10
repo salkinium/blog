@@ -78,14 +78,18 @@ if __name__ == "__main__":
     plt.xlabel("Input nanosecond delay", fontsize=16)
     plt.ylabel("Measured nanosecond delay", fontsize=16)
     plt.text(100, 7900, "STM32L0/L1 @ ~2MHz", fontsize=16)
+    plt.annotate("STM32L0", xy = (7170, 9059), fontsize=16, ha='right', va='bottom',
+                 xytext=(7000, 9500), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("STM32L1", xy = (9300, 7629), fontsize=16, ha='left', va='bottom',
+                 xytext=(8200, 6800), arrowprops = {"arrowstyle": "-"})
     plt.annotate("STM32F7 @ 16MHz", xy = (4000, 4800), fontsize=16, ha='right', va='bottom',
                  xytext=(3500, 5200), arrowprops = {"arrowstyle": "-"})
     plt.annotate("AVR @ 16MHz", xy = (5125, 5640), fontsize=16, ha='right', va='bottom',
                  xytext=(4800, 6200), arrowprops = {"arrowstyle": "-"})
     plt.annotate("STM32F1 @ 8MHz", xy = (2480, 2000), fontsize=16, ha='left', va='top',
-                 xytext=(3500, 2000), arrowprops = {"arrowstyle": "-"})
+                 xytext=(3000, 1800), arrowprops = {"arrowstyle": "-"})
     plt.annotate("STM32L4 @ 16MHz", xy = (910, 812), fontsize=16,
-                 xytext=(1500, 500), arrowprops = {"arrowstyle": "-"})
+                 xytext=(1500, 300), arrowprops = {"arrowstyle": "-"})
     plt.annotate("Ideal", xy = (400, 400), fontsize=16,
                  xytext=(600, -100), arrowprops = {"arrowstyle": "-"})
     plt.savefig("ns_boot.svg", transparent=True, bbox_inches='tight')
@@ -96,7 +100,7 @@ if __name__ == "__main__":
                lambda t: t == "ns",
                lambda c: c > 16e6,
                lambda d: d[0] <= 1000)
-    plt.xticks(fontsize=14); plt.yticks(fontsize=14)
+    plt.xticks(range(0, 1001, 100), fontsize=14); plt.yticks(range(0, 1001, 100), fontsize=14)
     plt.xlabel("Input nanosecond delay", fontsize=16)
     plt.ylabel("Measured nanosecond delay", fontsize=16)
     plt.annotate("Ideal", xy = (50, 50), fontsize=16,
@@ -104,10 +108,18 @@ if __name__ == "__main__":
     plt.text(10, 545, "STM32L0/L1 @ 32MHz", fontsize=16)
     plt.text(10, 412, "STM32F0 @ 48MHz", fontsize=16)
     plt.text(10, 330, "STM32L4 @ 48MHz", fontsize=16)
-    plt.annotate("STM32F7 @ 216MHz", xy = (180, 230), fontsize=16, ha='left', va='top',
-                 xytext=(280, 190), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("STM32L0", xy = (471, 625), fontsize=16, ha='right', va='center',
+                 xytext=(400, 670), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("STM32G0 @ 64MHz", xy = (611, 655), fontsize=16, ha='right', va='center',
+                 xytext=(560, 790), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("STM32L1", xy = (619, 531), fontsize=16, ha='left', va='bottom',
+                 xytext=(660, 460), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("STM32G4 @ 170MHz", xy = (248, 283), fontsize=16, ha='left', va='center',
+                 xytext=(320, 190), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("STM32F7 @ 216MHz", xy = (87, 122), fontsize=16, ha='left', va='center',
+                 xytext=(160, 100), arrowprops = {"arrowstyle": "-"})
     plt.annotate("STM32F4 @ 180MHz", xy = (99, 88), fontsize=16, ha='left', va='top',
-                 xytext=(190, 80), arrowprops = {"arrowstyle": "-"})
+                 xytext=(120, 40), arrowprops = {"arrowstyle": "-"})
     plt.savefig("ns_high_detail.svg", transparent=True, bbox_inches='tight', pad_inches=0.01)
     # plt.show()
 
@@ -133,6 +145,12 @@ if __name__ == "__main__":
     plt.xticks(fontsize=14); plt.yticks(fontsize=14)
     plt.xlabel("Input microsecond delay", fontsize=16)
     plt.ylabel("Measured microsecond delay", fontsize=16)
+    plt.annotate("STM32L0 @ ~2MHz", xy = (200, 210), fontsize=16, ha='right', va='center',
+                 xytext=(200, 300), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("STM32L1 @ ~2MHz", xy = (400, 403), fontsize=16, ha='right', va='center',
+                 xytext=(390, 490), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("Ideal", xy = (120, 121), fontsize=16, ha='left', va='top',
+                 xytext=(180, 100), arrowprops = {"arrowstyle": "-"})
     plt.savefig("us_boot.svg", transparent=True, bbox_inches='tight', pad_inches=0.01)
 
 

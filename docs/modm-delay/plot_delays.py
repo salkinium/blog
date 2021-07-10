@@ -69,7 +69,7 @@ if __name__ == "__main__":
     plt.figure(figsize=(20, 10))
     plt.axline((0, 0), (10000, 10000), color="gray")
     def ns_boot_filter(device, dtype, clock, delay):
-        return (delay[0] <= 10000 and dtype == "ns" and
+        return (delay[0] <= 10000 and dtype == "ns" and "_error" not in device and
                 (clock <= 16e6 or (device.startswith("h7") and clock <= 64e6)))
     plot_table(ns_boot_filter)
     plt.xticks(fontsize=14); plt.yticks(fontsize=14)
@@ -80,16 +80,16 @@ if __name__ == "__main__":
                  xytext=(7000, 9500), arrowprops = {"arrowstyle": "-"})
     plt.annotate("STM32L1", xy = (9300, 7629), fontsize=16, ha='left', va='bottom',
                  xytext=(8200, 6800), arrowprops = {"arrowstyle": "-"})
-    plt.annotate("STM32F7 @ 16MHz", xy = (4000, 4800), fontsize=16, ha='right', va='bottom',
+    plt.annotate("STM32F7 @ 16MHz", xy = (4020, 4800), fontsize=16, ha='right', va='bottom',
                  xytext=(3500, 5200), arrowprops = {"arrowstyle": "-"})
     plt.annotate("AVR @ 16MHz", xy = (5125, 5640), fontsize=16, ha='right', va='bottom',
                  xytext=(4800, 6200), arrowprops = {"arrowstyle": "-"})
     plt.annotate("STM32F1 @ 8MHz", xy = (2480, 2000), fontsize=16, ha='left', va='top',
                  xytext=(3000, 1800), arrowprops = {"arrowstyle": "-"})
     plt.annotate("STM32L4 @ 16MHz", xy = (910, 812), fontsize=16,
-                 xytext=(1500, 400), arrowprops = {"arrowstyle": "-"})
-    plt.annotate("STM32H7 @ 64MHz", xy = (500, 328), fontsize=16,
-                 xytext=(1000, -200), arrowprops = {"arrowstyle": "-"})
+                 xytext=(1500, 600), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("STM32H7 @ 64MHz", xy = (490, 650), fontsize=16,
+                 xytext=(1000, -100), arrowprops = {"arrowstyle": "-"})
     plt.annotate("Ideal", xy = (100, 100), fontsize=16,
                  xytext=(300, -200), arrowprops = {"arrowstyle": "-"})
     plt.savefig("ns_boot.svg", transparent=True, bbox_inches='tight')
@@ -97,15 +97,15 @@ if __name__ == "__main__":
     plt.clf()
     plt.axline((0, 0), (1000, 1000), color="gray")
     def ns_high_detail_filter(device, dtype, clock, delay):
-        return (delay[0] <= 1000 and dtype == "ns" and
+        return (delay[0] <= 1000 and dtype == "ns" and "_error" not in device and
                 ((device.startswith("h7") and clock > 64e6) or
                  (not device.startswith("h7") and clock > 16e6)))
     plot_table(ns_high_detail_filter)
     plt.xticks(range(0, 1001, 100), fontsize=14); plt.yticks(range(0, 1001, 100), fontsize=14)
     plt.xlabel("Input nanosecond delay", fontsize=16)
     plt.ylabel("Measured nanosecond delay", fontsize=16)
-    plt.annotate("Ideal", xy = (50, 50), fontsize=16,
-                 xytext=(50, 0), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("Ideal", xy = (20, 20), fontsize=16,
+                 xytext=(50, -10), arrowprops = {"arrowstyle": "-"})
     plt.text(10, 545, "STM32L0/L1 @ 32MHz", fontsize=16)
     plt.text(10, 412, "STM32F0 @ 48MHz", fontsize=16)
     plt.text(10, 330, "STM32L4 @ 48MHz", fontsize=16)
@@ -115,11 +115,11 @@ if __name__ == "__main__":
                  xytext=(560, 790), arrowprops = {"arrowstyle": "-"})
     plt.annotate("STM32L1", xy = (619, 531), fontsize=16, ha='left', va='bottom',
                  xytext=(660, 460), arrowprops = {"arrowstyle": "-"})
-    plt.annotate("STM32G4 @ 170MHz", xy = (248, 283), fontsize=16, ha='left', va='center',
-                 xytext=(320, 190), arrowprops = {"arrowstyle": "-"})
-    plt.annotate("STM32F7 @ 216MHz", xy = (164, 219), fontsize=16, ha='left', va='center',
+    # plt.annotate("STM32G4 @ 170MHz", xy = (248, 283), fontsize=16, ha='left', va='center',
+    #              xytext=(320, 190), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("STM32F7 @ 216MHz", xy = (89, 78), fontsize=16, ha='left', va='center',
                  xytext=(220, 100), arrowprops = {"arrowstyle": "-"})
-    plt.annotate("STM32H7 @ 240MHz", xy = (126, 87), fontsize=16, ha='left', va='top',
+    plt.annotate("STM32H7 @ 400MHz", xy = (46, 60), fontsize=16, ha='left', va='top',
                  xytext=(120, 40), arrowprops = {"arrowstyle": "-"})
     plt.savefig("ns_high_detail.svg", transparent=True, bbox_inches='tight', pad_inches=0.01)
     # plt.show()
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     # Smaller figure
     plt.figure(figsize=(20, 8.1))
     def ns_high_filter(device, dtype, clock, delay):
-        return (delay[0] <= 10000 and dtype == "ns" and
+        return (delay[0] <= 10000 and dtype == "ns" and "_noerror" not in device and
                 ((device.startswith("h7") and clock > 64e6) or
                  (not device.startswith("h7") and clock > 16e6)))
     plot_table(ns_high_filter)
@@ -136,10 +136,23 @@ if __name__ == "__main__":
     plt.xlabel("Input nanosecond delay", fontsize=16)
     plt.ylabel("Measured nanosecond delay", fontsize=16)
     plt.annotate("STM32F7 @ 216MHz", xy = (8000, 7500), fontsize=16, ha='left', va='top',
-                 xytext=(8000, 6500), arrowprops = {"arrowstyle": "-"})
-    plt.annotate("STM32H7 @ 240MHz", xy = (8000, 8320), fontsize=16, ha='right', va='bottom',
-                 xytext=(7300, 8600), arrowprops = {"arrowstyle": "-"})
+                 xytext=(8000, 6000), arrowprops = {"arrowstyle": "-"})
+    plt.annotate("STM32H7 @ 400MHz", xy = (7000, 5850), fontsize=16, ha='left', va='top',
+                 xytext=(7000, 5000), arrowprops = {"arrowstyle": "-"})
     plt.savefig("ns_high.svg", transparent=True, bbox_inches='tight', pad_inches=0.01)
+
+    plt.clf()
+    # Smaller figure
+    plt.figure(figsize=(20, 8.1))
+    def ns_high_filter(device, dtype, clock, delay):
+        return (delay[0] <= 10000 and dtype == "ns" and "_error" not in device and
+                ((device.startswith("h7") and clock > 64e6) or
+                 (not device.startswith("h7") and clock > 16e6)))
+    plot_table(ns_high_filter)
+    plt.xticks(fontsize=14); plt.yticks(fontsize=14);
+    plt.xlabel("Input nanosecond delay", fontsize=16)
+    plt.ylabel("Measured nanosecond delay", fontsize=16)
+    plt.savefig("ns_high_noerror.svg", transparent=True, bbox_inches='tight', pad_inches=0.01)
 
     plt.clf()
     def us_boot_filter(device, dtype, clock, delay):

@@ -133,8 +133,6 @@ if __name__ == "__main__":
     plt.xticks(fontsize=14); plt.yticks(fontsize=14)
     plt.xlabel("Input microsecond delay", fontsize=16)
     plt.ylabel("Measured microsecond delay", fontsize=16)
-    plt.annotate("STM32L0/L1 @ ~2MHz", xy = (600, 610), fontsize=16, ha='right', va='bottom',
-                 xytext=(550, 700), arrowprops = {"arrowstyle": "-"})
     plt.savefig("us_boot.svg", transparent=True, bbox_inches='tight', pad_inches=0.01)
 
 
