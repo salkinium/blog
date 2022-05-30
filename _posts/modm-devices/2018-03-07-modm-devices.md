@@ -9,17 +9,17 @@ In a nutshell, we feed detailed hardware description data for almost all AVR
 and STM32 targets into a code generator to create a C++ Hardware Abstraction
 Layer (HAL), startup & linkerscript code, documentation and support tools.
 
-This isn’t exactly a new idea, after all very similar ideas have been floating
+This isn't exactly a new idea, after all very similar ideas have been floating
 around before, most notably in the Linux Kernel with its
 [Device Tree (DT) effort](https://www.devicetree.org). In fact, modm itself is based
-entirely on [xpcc](http://xpcc.io) which matured the idea of data-driven HAL
-generation in the first place.
+entirely on [xpcc](https://github.com/roboterclubaachen/xpcc) which matured the
+idea of data-driven HAL generation in the first place.
 
 However, for modm we focused on what goes on behind the scenes: how to *acquire*
 detailed target description data and how to *use* it with reasonable effort.
 We now have a toolbox that transcends its use as our C++ HAL generator and
 instead can be applied generically to any project in any language
-(\*awkwardly winks at the Rust community\*). That’s pretty powerful stuff.
+(\*awkwardly winks at the Rust community\*). That's pretty powerful stuff.
 
 So let me first ease you into this topic with some historic background and then
 walk you through the data sources we use and the design decisions of our data
@@ -44,14 +44,14 @@ languages did all the heavy lifting and talked via CAN to the AVR actuators and 
 PC did a disk check once during its boot process, which rendered the robot
 unresponsive for a few minutes. Unfortunately it did this during the a
 [Eurobot](http://www.eurobot.org) finals game and we lost due to that.
-Since then our robots don’t have a kernel in their critical path anymore.)
+Since then our robots don't have a kernel in their critical path anymore.)
 
 RCCP was eventually refactored into the Cross Platform Component Communication
 (XPCC) library and open-sourced on Sourceforge in 2009.
 Around 2012 when Fabian was leaving us to go work on satellites at the German
 space agency (DLR), I took over stewardship of the project and moved it over to
 [GitHub where it exists to this day](https://github.com/roboterclubaachen/xpcc).
-It’s the foundation of all the RCAs robots.
+It's the foundation of all the RCAs robots.
 
 
 ### From AVR to STM32
@@ -63,7 +63,7 @@ began the cumbersome task of porting the HAL that worked so well on the AVRs to
 the STM32F1 and F4 families, both of which have much more capable peripherals.
 
 We had inherited a C++ API that passed around static classes containing the
-peripheral abstraction to template classes wrapping these classes. It’s the
+peripheral abstraction to template classes wrapping these classes. It's the
 clear anti-thesis of polymorphic interface design, almost a form of "compile
 time duck-typing":
 
@@ -99,7 +99,7 @@ This technique resulted in a rather unusual HAL, but when used *in moderation* i
 yields ridiculously small binary sizes! And this was absolutely a requirement on
 our AVRs which wanted to stuff full of control code for our autonomous robots.
 
-The size reduction didn’t so much come from using C++ features like templates,
+The size reduction didn't so much come from using C++ features like templates,
 but from being able to very accurately dissect special cases into their own functions.
 This is particularly useful on AVRs where the IO memory map is very irregular and
 differs quite a bit between devices. Writing one function to handle all variations
@@ -107,7 +107,7 @@ at runtime can be more expensive than writing a couple of specialized functions 
 letting the linker throw away all the unused ones.
 
 But it does have one significant and obvious disadvantage: Our HAL had to *have* a
-class for every peripheral you want to use. And adding these classes manually didn’t
+class for every peripheral you want to use. And adding these classes manually didn't
 scale very well with us and it proved an even bigger problem for a device with the
 peripheral amount and features of an STM32. And so the inevitable happened: we started
 using preprocessor macros to "instantiate" these peripheral classes, or switched
@@ -117,23 +117,23 @@ trees. It was such an ugly solution.
 We also had a mechanism for generating code manually calling a Jinja2 template
 engine and committing the result, in fact, already
 [since Nov. 2009](https://github.com/roboterclubaachen/xpcc/commit/e239176#diff-41dfb98586123c4821a51af70cf93ae8).
-It was first used to create the AVR’s UART classes and slowly expanded to other
-platforms. But it didn’t really scale either because you still had to explicitly
+It was first used to create the AVR's UART classes and slowly expanded to other
+platforms. But it didn't really scale either because you still had to explicitly
 provide all the substitution data to the engine, which usually only was the number,
 or letter, identifying the peripheral.
 
-It wasn’t until 2013 that [Kevin Läufer](https://github.com/ekiwi) generalized
+It wasn't until 2013 that [Kevin Läufer](https://github.com/ekiwi) generalized
 this idea by moving it into our [SCons-based](http://scons.org) build system and
 collecting all template substitution data into one common file per target, which
 we just called "The Device File" (naming things is hard, ok?). This made it much
 easier to generate new peripheral drivers and it even did so on-the-fly during the
-build process due to being included into SCons’ dependency graph, which eliminated
+build process due to being included into SCons' dependency graph, which eliminated
 the need for manually committing these generated files and keeping them up-to-date.
 
 
 ### First Steps
 
-The first draft of the [STM32F407’s device file](https://github.com/roboterclubaachen/xpcc/commit/3fcf8cb)
+The first draft of the [STM32F407's device file](https://github.com/roboterclubaachen/xpcc/commit/3fcf8cb)
 was assembled by hand and lacked a clear structure. In retrospect, we also had
 trouble deciding which data goes in the device file and which
 [stays embedded in the templates](https://github.com/roboterclubaachen/xpcc/blob/826c43797d31513d128760c190b19bdc61ca2f6b/src/xpcc/architecture/platform/core/cortex/stm32/stm32.macros#L52-L168),
@@ -141,7 +141,7 @@ but, we didn't sweat the details, since we had an entire library to refactor and
 a robot to build.
 
 The major limitation of our system of course was getting the required data and
-manually assembling it didn’t scale, and so we were stuck in the same bottleneck
+manually assembling it didn't scale, and so we were stuck in the same bottleneck
 as before, albeit with a slightly better build process.
 And then, after researching how avr-gcc actually generate the `<avr/io.h>` headers,
 a solution presented itself:
@@ -228,7 +228,7 @@ maps differ and coming up with strategies on how to map this functionality into 
 
 ST maintains the [CubeMX initialization code generator](http://www.st.com/en/development-tools/stm32cubemx.html),
 which contains "a pinout-conflict solver, a clock-tree setting helper, a power-consumption
-calculator, and an utility performing MCU peripheral configuration". Hm, doesn’t that
+calculator, and an utility performing MCU peripheral configuration". Hm, doesn't that
 sound interesting? How did they implement these features, we wondered.
 
 Back in 2013 CubeMX was still called MicroXplorer and wasn't nearly as nice to use
@@ -1237,8 +1237,6 @@ are mostly duplicated for each target and [all GPIO signal data is added manuall
 by an unfortunate soul with all the [side-effects of manual labor](https://github.com/ARMmbed/mbed-os/blob/8f647beacb6f14ce1af7f2eff01d0a497f94f7ae/targets/TARGET_STM/TARGET_STM32F1/TARGET_NUCLEO_F103RB/PeripheralPins.c#L35-L37).
 That's insane, as you've seen above, ST is already maintaining and using this data
 already to generate code with CubeMX. How is this not automated?
-(I dared to utter this simple observation about two years ago while working at
-Arm on Mbed OS and it turned out to be _surprisingly unpopular_. Touchy folks. 🙃)
 
 Fortunately, in the last few years there was some significant progress in enabling
 (new) programming languages on embedded, like [MicroPython](http://micropython.org),
@@ -1253,8 +1251,3 @@ to actually use it](https://internals.rust-lang.org/t/announcing-the-embedded-de
 and they don't seem afraid to tackle these issues. (Your move, C++ people!)
 
 
-
-
-
-
-_Formatting of all data excerpts is possibly copyrighted by their respective owners and if so used here in fair use. However, the data itself are facts which cannot be copyrighted._

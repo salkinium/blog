@@ -3,7 +3,7 @@ layout: post
 title: "The Curious Case of xpcc's Error Model"
 ---
 
-In hindsight it is quite apparent that [xpcc](http://xpcc.io) and therefore also the [@RCA_eV robot code](https://twitter.com/RCA_eV) was missing a good error model.
+In hindsight it is quite apparent that [xpcc](https://github.com/roboterclubaachen/xpcc) and therefore also the [@RCA_eV robot code](https://twitter.com/RCA_eV) was missing a good error model.
 Until now xpcc's way of dealing with failures included using `static_assert` at compile time and returning error codes at runtime whenever it was deemed necessary. We never considered runtime assertions, nor catching hardware errors like the ARM Cortex-M Fault exceptions. We crashed and burned, a few times literally.
 
 So what can we do that is simple to use and efficient on AVR and Cortex-M devices, but still powerful enough to be useful? It's time we thought about our error model.
@@ -15,7 +15,7 @@ So what can we do that is simple to use and efficient on AVR and Cortex-M device
 ## The Problem
 
 [The RCA robots](http://www.roboterclub.rwth-aachen.de/) are controlled by a number of software components that communicate by Remote Procedure Calls (PRCs) via an event loop locally or over CAN.
-We call this Cross Platform Component Communication (XPCC) and it's an under-appreciated (and under-documented) [part of the xpcc framework](http://xpcc.io/api/group__xpcc__comm.html).
+We call this Cross Platform Component Communication (XPCC) and it's an under-appreciated (and under-documented) part of the xpcc framework
 It allows us to distribute components over many microcontrollers if needed and helps us understand what is happening in the robot at runtime by listening in on the CAN bus.
 
 However, we are constantly fine tuning our robots before and after a match and if we accidentally leave the CAN bus disconnected the robot turns into a (very expensive) paper weight and we loose the game. It is therefore paramount that we detect this situation on CAN initialization and let the robot emit loud and annoying sounds so that the ~~slaves~~ students can fix it. There are several other places in the initialization that must not fail for the same reason.

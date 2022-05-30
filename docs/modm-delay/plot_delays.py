@@ -141,18 +141,16 @@ if __name__ == "__main__":
                  xytext=(7000, 5000), arrowprops = {"arrowstyle": "-"})
     plt.savefig("ns_high.svg", transparent=True, bbox_inches='tight', pad_inches=0.01)
 
-    plt.clf()
-    # Smaller figure
-    plt.figure(figsize=(20, 8.1))
-    def ns_high_filter(device, dtype, clock, delay):
-        return (delay[0] <= 10000 and dtype == "ns" and "_error" not in device and
-                ((device.startswith("h7") and clock > 64e6) or
-                 (not device.startswith("h7") and clock > 16e6)))
-    plot_table(ns_high_filter)
-    plt.xticks(fontsize=14); plt.yticks(fontsize=14);
-    plt.xlabel("Input nanosecond delay", fontsize=16)
-    plt.ylabel("Measured nanosecond delay", fontsize=16)
-    plt.savefig("ns_high_noerror.svg", transparent=True, bbox_inches='tight', pad_inches=0.01)
+    # plt.clf()
+    # def ns_high_filter(device, dtype, clock, delay):
+    #     return (delay[0] <= 10000 and dtype == "ns" and "_error" not in device and
+    #             ((device.startswith("h7") and clock > 64e6) or
+    #              (not device.startswith("h7") and clock > 16e6)))
+    # plot_table(ns_high_filter)
+    # plt.xticks(fontsize=14); plt.yticks(fontsize=14);
+    # plt.xlabel("Input nanosecond delay", fontsize=16)
+    # plt.ylabel("Measured nanosecond delay", fontsize=16)
+    # plt.savefig("ns_high_noerror.svg", transparent=True, bbox_inches='tight', pad_inches=0.01)
 
     plt.clf()
     def us_boot_filter(device, dtype, clock, delay):

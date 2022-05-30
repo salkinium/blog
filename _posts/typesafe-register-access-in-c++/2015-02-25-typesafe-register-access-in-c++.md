@@ -22,8 +22,10 @@ while(true)
 }
 ```
 
-It did not really dawn on me how primitive this concept was until I was forced to model a memory map myself for one of our many [device drivers](http://xpcc.io/api/group__driver.html).
+It did not really dawn on me how primitive this concept was until I was forced to model a memory map myself for one of our many device drivers.
 Since I have never been a friend of using the C preprocessor in C++ unless absolutely necessary, it seemed like a good opportunity to research how best to implement this in pure C++.
+
+**Update 2022: Note that this technique is outdated for C++20! Please consult the internet for the current state-of-the-art.**
 
 <!--more-->
 
@@ -424,8 +426,7 @@ Prescaler getPrescaler()
 {  return Prescaler_t::get(getControl());  }
 ```
 
-For working examples of this concept have a look at the [ITG3200][], [LIS302][] and [LIS3DSH][] device drivers.
-These drivers use [resumable functions][xpcc_rfs] to make bus access non-blocking.
+For working examples of this concept have a look at the [xpcc device drivers][xpcc_drvs].
 
 
 ## Conclusions
@@ -446,6 +447,7 @@ These drivers use [resumable functions][xpcc_rfs] to make bus access non-blockin
 [^4]: While researching for this post I discovered an almost identical [`flags` class on Github][enum_flags]. However, it is not written for embedded targets and has a slightly different field of application.
 
 *This post was first published at blog.xpcc.io.*
+*The links have been updated to point to the successor project modm.io.*
 
 [cppmmio]: https://github.com/kensmith/cppmmio
 
@@ -454,12 +456,8 @@ These drivers use [resumable functions][xpcc_rfs] to make bus access non-blockin
 
 [enum_flags]: https://github.com/grisumbras/enum-flags
 
-[xpcc_flags]: http://xpcc.io/api/structxpcc_1_1_flags.html
-[xpcc_configuration]: http://xpcc.io/api/structxpcc_1_1_configuration.html
-[xpcc_value]: http://xpcc.io/api/structxpcc_1_1_value.html
+[xpcc_flags]: https://modm.io/reference/module/modm-architecture-register/
+[xpcc_configuration]: https://modm.io/reference/module/modm-architecture-register/#register-configurations
+[xpcc_value]: https://modm.io/reference/module/modm-architecture-register/#register-values
 
-[itg3200]: http://xpcc.io/api/classxpcc_1_1_itg3200.html
-[lis302]: http://xpcc.io/api/classxpcc_1_1_lis302dl.html
-[lis3dsh]: http://xpcc.io/api/classxpcc_1_1_lis3dsh.html
-
-[xpcc_rfs]: http://xpcc.io/api/group__resumable.html
+[xpcc_drvs]: https://github.com/modm-io/modm/tree/develop/src/modm/driver
